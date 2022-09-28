@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Find all museums in ...',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -76,11 +77,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         if (placeTextController.text.isEmpty) {
                           return;
                         }
+                        final value = placeTextController.text.trim();
                         setState(() {
                           loading = true;
                         });
                         PlaceStore()
-                            .getAllMueseumsIn(placeTextController.text)
+                            .getAllMueseumsIn(value)
                             .then((elementList) => {
                                   if (elementList == null)
                                     {
@@ -96,8 +98,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                         }
                                       else
                                         {
-                                          print(elementList.length),
-                                          print(elementList.first.tags.name),
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(

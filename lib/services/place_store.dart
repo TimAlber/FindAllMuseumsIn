@@ -35,19 +35,14 @@ class PlaceStore {
       if (response.statusCode == 200) {
         final jsonString = await response.stream.bytesToString();
         try {
-          print('jsonString: ' + jsonString);
-
           final museums = museumsFromJson(jsonString);
-
-          print('elements: ' + museums.elements.toString());
-
           return museums.elements;
         } catch (e) {
           Logger().e(e);
           return null;
         }
       } else {
-        print(response.reasonPhrase);
+        Logger().e(response.reasonPhrase);
         return null;
       }
     } catch (e) {

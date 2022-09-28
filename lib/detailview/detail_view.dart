@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:all_museums_in/services/museums.dart' as musem;
+import 'package:latlong2/latlong.dart';
 import 'package:logger/logger.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map/plugin_api.dart';
 
 class DetailView extends StatefulWidget {
   final musem.Element element;
@@ -24,7 +27,34 @@ class _DetailViewState extends State<DetailView> {
             SizedBox(
               height: 300,
               width: MediaQuery.of(context).size.width,
-              child: const Placeholder(),
+              child: FlutterMap(
+                options: MapOptions(
+                  zoom: 12,
+                  center: LatLng(widget.element.lat, widget.element.lon),
+                ),
+                nonRotatedChildren: [
+                  AttributionWidget.defaultWidget(
+                    source: 'OpenStreetMap contributors',
+                    onSourceTapped: null,
+                  ),
+                ],
+                children: [
+                  TileLayer(
+                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'com.example.app',
+                  ),
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        point: LatLng(widget.element.lat, widget.element.lon),
+                        width: 20,
+                        height: 20,
+                        builder: (context) => const Icon(Icons.place_sharp),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.place_outlined),

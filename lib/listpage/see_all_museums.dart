@@ -24,8 +24,6 @@ class _SeeAllMuseumsPageState extends State<SeeAllMuseumsPage> {
           setState(() {
             devicePosition = position;
           }),
-          print(
-              'devicePosition: ${devicePosition!.latitude} ${devicePosition!.longitude}'),
         });
     super.initState();
   }
