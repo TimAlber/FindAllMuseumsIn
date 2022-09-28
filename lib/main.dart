@@ -73,15 +73,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           minimumSize:
                               MaterialStateProperty.all(const Size(200, 100))),
                       onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) =>
-                        //       const SeeAllMuseumsPage()),
-                        // );
-                        //
-                        // return;
-
                         if (placeTextController.text.isEmpty) {
                           return;
                         }

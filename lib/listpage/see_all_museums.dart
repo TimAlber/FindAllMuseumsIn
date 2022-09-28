@@ -1,6 +1,9 @@
+import 'package:all_museums_in/detailview/detail_view.dart';
 import 'package:all_museums_in/listpage/search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:all_museums_in/services/museums.dart' as musem;
+import 'package:all_museums_in/geolocator/geolocator.dart';
+import 'package:geolocator/geolocator.dart';
 
 class SeeAllMuseumsPage extends StatefulWidget {
   final List<musem.Element> elements;
@@ -13,6 +16,19 @@ class SeeAllMuseumsPage extends StatefulWidget {
 
 class _SeeAllMuseumsPageState extends State<SeeAllMuseumsPage> {
   var _searchText = '';
+  Position? devicePosition;
+
+  @override
+  void initState() {
+    determinePosition().then((position) => {
+          setState(() {
+            devicePosition = position;
+          }),
+          print(
+              'devicePosition: ${devicePosition!.latitude} ${devicePosition!.longitude}'),
+        });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +39,11 @@ class _SeeAllMuseumsPageState extends State<SeeAllMuseumsPage> {
           });
         },
         title: 'All Museums:',
-        body: _getTodoList(
-          elements: widget.elements,
-        ));
+        body: devicePosition != null
+            ? _getTodoList(
+                elements: widget.elements,
+              )
+            : const Center(child: CircularProgressIndicator()));
   }
 
   Widget _getTodoList({
@@ -36,6 +54,13 @@ class _SeeAllMuseumsPageState extends State<SeeAllMuseumsPage> {
             _searchText.isEmpty ||
             (entry.tags.name != null &&
                 entry.tags.name!.toLowerCase().contains(_searchText)))
+        .toList();
+
+    final distanceList = filteredList
+        .map((ele) =>
+            Geolocator.distanceBetween(ele.lat, ele.lon,
+                devicePosition!.latitude, devicePosition!.longitude) /
+            1000)
         .toList();
 
     return ListView.builder(
@@ -52,8 +77,16 @@ class _SeeAllMuseumsPageState extends State<SeeAllMuseumsPage> {
           subtitle: Text(
               '${element.tags.addrStreet ?? ''} ${element.tags.addrHousenumber ?? ''} ${element.tags.addrPostcode ?? ''} ${element.tags.addrCity ?? ''}'),
           onTap: () {
-            print('tapped ${element.tags.name}');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailView(
+                  element: element,
+                ),
+              ),
+            );
           },
+          trailing: Text('${distanceList[index].toStringAsFixed(3)} km'),
         );
       },
     );
