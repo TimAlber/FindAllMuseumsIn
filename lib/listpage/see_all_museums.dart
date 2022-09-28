@@ -63,7 +63,7 @@ class _SeeAllMuseumsPageState extends State<SeeAllMuseumsPage> {
 
     return ListView.builder(
       padding: EdgeInsets.zero,
-      physics: const NeverScrollableScrollPhysics(),
+      physics: const AlwaysScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: filteredList.length,
       itemBuilder: (context, index) {
