@@ -7,8 +7,12 @@ import 'package:geolocator/geolocator.dart';
 
 class SeeAllMuseumsPage extends StatefulWidget {
   final List<musem.Element> elements;
+  final String placeType;
 
-  const SeeAllMuseumsPage({required this.elements, Key? key}) : super(key: key);
+  const SeeAllMuseumsPage({
+    required this.elements,
+    required this.placeType,
+    Key? key}) : super(key: key);
 
   @override
   State<SeeAllMuseumsPage> createState() => _SeeAllMuseumsPageState();
@@ -36,15 +40,15 @@ class _SeeAllMuseumsPageState extends State<SeeAllMuseumsPage> {
             _searchText = value;
           });
         },
-        title: 'All Museums:',
+        title: 'All ${widget.placeType}:',
         body: devicePosition != null
-            ? _getTodoList(
+            ? _getPlaceList(
                 elements: widget.elements,
               )
             : const Center(child: CircularProgressIndicator()));
   }
 
-  Widget _getTodoList({
+  Widget _getPlaceList({
     required List<musem.Element> elements,
   }) {
     final filteredList = elements

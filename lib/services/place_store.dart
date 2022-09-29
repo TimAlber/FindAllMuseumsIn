@@ -1,10 +1,11 @@
 import 'package:http/http.dart';
 import 'package:logger/logger.dart';
 
+import '../main.dart';
 import 'museums.dart';
 
 class PlaceStore {
-  Future<List<Element>?> getAllMueseumsIn(String input) async {
+  Future<List<Element>?> getAllMueseumsIn(String input, Filter filterInput) async {
     try {
       var headers = {
         'Accept': '*/*',
@@ -27,7 +28,7 @@ class PlaceStore {
       var request =
           Request('POST', Uri.parse('https://overpass-api.de/api/interpreter'));
       request.body =
-          '''data=%5Bout%3Ajson%5D%5Btimeout%3A25%5D%3B%0Aarea%5Bname%3D%22$input%22%5D-%3E.searchArea%3B%0A(%0A++node%5B%22tourism%22%3D%22museum%22%5D(area.searchArea)%3B%0A)%3B%0A%2F%2F+print+results%0Aout+body%3B%0A%3E%3B%0Aout+skel+qt%3B''';
+          '''data=%5Bout%3Ajson%5D%5Btimeout%3A25%5D%3B%0Aarea%5Bname%3D%22$input%22%5D-%3E.searchArea%3B%0A(%0A++node%5B%22${filterInput.key}%22%3D%22${filterInput.value}%22%5D(area.searchArea)%3B%0A)%3B%0A%2F%2F+print+results%0Aout+body%3B%0A%3E%3B%0Aout+skel+qt%3B''';
       request.headers.addAll(headers);
 
       StreamedResponse response = await request.send();

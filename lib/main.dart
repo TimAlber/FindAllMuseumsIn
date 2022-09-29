@@ -1,3 +1,4 @@
+import 'package:all_museums_in/filterchooser/choose_filter.dart';
 import 'package:all_museums_in/listpage/see_all_museums.dart';
 import 'package:all_museums_in/services/place_store.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Find all museums in ...',
+      title: 'Find all ... in ...',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -46,9 +47,17 @@ class _MyHomePageState extends State<MyHomePage> {
   final placeTextController = TextEditingController();
   var loading = false;
   List<Filter> filters = [];
+  Filter? choosenFilter;
+  var placeText = 'Berlin';
 
   @override
   void initState() {
+    placeTextController.addListener(() {
+      setState(() {
+        placeText = placeTextController.text;
+      });
+    });
+
     _getAllFilters();
     super.initState();
   }
@@ -59,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     for (final row in rowsAsListOfValues){
       final nrow = row.first.toString().split(';');
-      if(nrow.last == 'N'){
+      if(nrow.last == 'N' && nrow[3] == '-'){
         final newFilter = Filter(word: nrow.first, key: nrow[1], value: nrow[2]);
         filters.add(newFilter);
       }
@@ -76,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Find all museums in ..."),
+        title: const Text("Find all ... in ..."),
       ),
       body: !loading
           ? Center(
@@ -84,7 +93,37 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   const Text(
-                    'Find all museums in:',
+                    'Find all: ',
+                    style: TextStyle(fontSize: 36),
+                    textAlign: TextAlign.center,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: TextField(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ChooseFilter(
+                                    filters: filters,
+                                    callback: (filter ) {
+                                      setState(() {
+                                        choosenFilter = filter;
+                                      });
+                                    },
+                                  )),
+                        );
+                      },
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        hintText: choosenFilter != null ? choosenFilter!.word : 'Museum',
+                      ),
+                    ),
+                  ),
+                  const Text(
+                    'in: ',
                     style: TextStyle(fontSize: 36),
                     textAlign: TextAlign.center,
                   ),
@@ -107,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           minimumSize:
                               MaterialStateProperty.all(const Size(200, 100))),
                       onPressed: () {
-                        if (placeTextController.text.isEmpty) {
+                        if (placeTextController.text.isEmpty || choosenFilter == null) {
                           return;
                         }
                         final value = placeTextController.text.trim();
@@ -115,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           loading = true;
                         });
                         PlaceStore()
-                            .getAllMueseumsIn(value)
+                            .getAllMueseumsIn(value, choosenFilter!)
                             .then((elementList) => {
                                   if (elementList == null)
                                     {
@@ -127,7 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       if (elementList.isEmpty)
                                         {
                                           showErrorAlert(context,
-                                              "There is no museums in this place."),
+                                              "There is no ${choosenFilter!.word} in $value."),
                                         }
                                       else
                                         {
@@ -137,6 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 builder: (context) =>
                                                     SeeAllMuseumsPage(
                                                       elements: elementList,
+                                                      placeType: choosenFilter!.word,
                                                     )),
                                           ),
                                         }
@@ -146,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   }),
                                 });
                       },
-                      child: const Text('Find all museums')),
+                      child: Text('Find all ${choosenFilter != null ? choosenFilter!.word : '...'} in $placeText')),
                 ],
               ),
             )
