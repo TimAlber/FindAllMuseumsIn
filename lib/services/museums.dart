@@ -44,6 +44,7 @@ class Element {
     required this.lat,
     required this.lon,
     required this.tags,
+    this.distance,
   });
 
   String type;
@@ -51,6 +52,7 @@ class Element {
   double lat;
   double lon;
   Tags tags;
+  double? distance;
 
   factory Element.fromJson(Map<String, dynamic> json) => Element(
         type: json["type"],

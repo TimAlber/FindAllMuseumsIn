@@ -85,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Find all ... in ..."),
+        title: Text("Find all ${choosenFilter != null ? choosenFilter!.word : '...'} in ${placeText.isNotEmpty ? placeText : '...'}"),
       ),
       body: !loading
           ? Center(
@@ -118,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       readOnly: true,
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
-                        hintText: choosenFilter != null ? choosenFilter!.word : 'Museum',
+                        hintText: choosenFilter != null ? choosenFilter!.word : 'for example Museum',
                       ),
                     ),
                   ),
@@ -133,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       controller: placeTextController,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        hintText: 'Berlin',
+                        hintText: 'for example Berlin',
                       ),
                     ),
                   ),
@@ -186,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   }),
                                 });
                       },
-                      child: Text('Find all ${choosenFilter != null ? choosenFilter!.word : '...'} in $placeText')),
+                      child: Text('Find all ${choosenFilter != null ? choosenFilter!.word : '...'} in ${placeText.isNotEmpty ? placeText : '...'}')),
                 ],
               ),
             )

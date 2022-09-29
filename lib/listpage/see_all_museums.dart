@@ -58,12 +58,15 @@ class _SeeAllMuseumsPageState extends State<SeeAllMuseumsPage> {
                 entry.tags.name!.toLowerCase().contains(_searchText)))
         .toList();
 
-    final distanceList = filteredList
-        .map((ele) =>
-            Geolocator.distanceBetween(ele.lat, ele.lon,
-                devicePosition!.latitude, devicePosition!.longitude) /
-            1000)
-        .toList();
+
+    for(var ele in filteredList){
+      final distance = Geolocator.distanceBetween(ele.lat, ele.lon, devicePosition!.latitude, devicePosition!.longitude) / 1000;
+      ele.distance = distance;
+    }
+
+    filteredList.sort((a, b) {
+      return a.distance!.compareTo(b.distance!);
+    });
 
     return ListView.builder(
       padding: EdgeInsets.zero,
@@ -88,7 +91,7 @@ class _SeeAllMuseumsPageState extends State<SeeAllMuseumsPage> {
               ),
             );
           },
-          trailing: Text('${distanceList[index].toStringAsFixed(3)} km'),
+          trailing: Text('${element.distance!.toStringAsFixed(3)} km'),
         );
       },
     );
