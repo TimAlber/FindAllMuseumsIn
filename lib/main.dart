@@ -1,9 +1,22 @@
 import 'package:all_museums_in/listpage/see_all_museums.dart';
 import 'package:all_museums_in/services/place_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:csv/csv.dart';
 
 void main() {
   runApp(const MyApp());
+}
+
+class Filter {
+  Filter({
+    required this.word,
+    required this.key,
+    required this.value,
+  });
+  String word;
+  String key;
+  String value;
 }
 
 class MyApp extends StatelessWidget {
@@ -32,6 +45,26 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final placeTextController = TextEditingController();
   var loading = false;
+  List<Filter> filters = [];
+
+  @override
+  void initState() {
+    _getAllFilters();
+    super.initState();
+  }
+
+  void _getAllFilters() async {
+    final all = await rootBundle.loadString('assets/csv/filters2.csv');
+    List<List<dynamic>> rowsAsListOfValues = const CsvToListConverter().convert(all);
+
+    for (final row in rowsAsListOfValues){
+      final nrow = row.first.toString().split(';');
+      if(nrow.last == 'N'){
+        final newFilter = Filter(word: nrow.first, key: nrow[1], value: nrow[2]);
+        filters.add(newFilter);
+      }
+    }
+  }
 
   @override
   void dispose() {

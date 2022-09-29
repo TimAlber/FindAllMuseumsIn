@@ -43,6 +43,7 @@ dependencies:
   url_launcher: ^6.1.5
   flutter_map: ^3.0.0
   latlong2: ^0.8.1
+  csv: ^5.0.1
 
 dev_dependencies:
   flutter_test:
@@ -60,7 +61,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
+  assets:
+    - assets/csv/filters2.csv
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
