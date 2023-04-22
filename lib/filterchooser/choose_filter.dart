@@ -5,12 +5,9 @@ import 'package:flutter/material.dart';
 class ChooseFilter extends StatefulWidget {
   final List<Filter> filters;
   final Function(Filter) callback;
-  
-  const ChooseFilter({
-    required this.filters,
-    required this.callback,
-    Key? key
-  }) : super(key: key);
+
+  const ChooseFilter({required this.filters, required this.callback, Key? key})
+      : super(key: key);
 
   @override
   State<ChooseFilter> createState() => _ChooseFilterState();
@@ -29,16 +26,16 @@ class _ChooseFilterState extends State<ChooseFilter> {
       },
       body: _getFilterList(filters: widget.filters),
       title: 'Choose a place to find:',
-      
     );
   }
 
-  Widget _getFilterList({required List<Filter> filters,}){
-
+  Widget _getFilterList({
+    required List<Filter> filters,
+  }) {
     final filteredList = filters
         .where((entry) =>
-    _searchText.isEmpty ||
-        (entry.word.toLowerCase().contains(_searchText)))
+            _searchText.isEmpty ||
+            (entry.word.toLowerCase().contains(_searchText)))
         .toList();
 
     filteredList.sort((a, b) {
@@ -53,9 +50,7 @@ class _ChooseFilterState extends State<ChooseFilter> {
       itemBuilder: (context, index) {
         var element = filteredList[index];
         return ListTile(
-          title: Text(
-            element.word
-          ),
+          title: Text(element.word),
           subtitle: Text('${element.key} = ${element.value}'),
           onTap: () {
             showDialog(
@@ -67,7 +62,6 @@ class _ChooseFilterState extends State<ChooseFilter> {
       },
     );
   }
-
 
   Widget _getConfirmPopup(BuildContext context, Filter filter) {
     return AlertDialog(

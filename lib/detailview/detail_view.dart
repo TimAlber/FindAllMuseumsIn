@@ -1,5 +1,9 @@
+import 'dart:async';
+
+import 'package:all_museums_in/geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:all_museums_in/services/museums.dart' as musem;
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logger/logger.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -16,6 +20,31 @@ class DetailView extends StatefulWidget {
 }
 
 class _DetailViewState extends State<DetailView> {
+  Timer? timer;
+  Position? devicePosition;
+
+  @override
+  void initState() {
+    timer = Timer.periodic(
+        const Duration(seconds: 2),
+        (Timer t) => {
+              determinePosition().then((position) => {
+                    setState(() {
+                      devicePosition = position;
+                      print(devicePosition);
+                    }),
+                  }),
+            });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,15 +61,10 @@ class _DetailViewState extends State<DetailView> {
                   zoom: 12,
                   center: LatLng(widget.element.lat, widget.element.lon),
                 ),
-                nonRotatedChildren: [
-                  AttributionWidget.defaultWidget(
-                    source: 'OpenStreetMap contributors',
-                    onSourceTapped: null,
-                  ),
-                ],
                 children: [
                   TileLayer(
-                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     userAgentPackageName: 'com.example.app',
                   ),
                   MarkerLayer(
@@ -50,6 +74,13 @@ class _DetailViewState extends State<DetailView> {
                         width: 20,
                         height: 20,
                         builder: (context) => const Icon(Icons.place_sharp),
+                      ),
+                      if(devicePosition != null)
+                      Marker(
+                        point: LatLng(devicePosition!.latitude, devicePosition!.longitude),
+                        width: 20,
+                        height: 20,
+                        builder: (context) => const Icon(Icons.circle, color: Colors.blue,),
                       ),
                     ],
                   ),

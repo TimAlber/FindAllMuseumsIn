@@ -48,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var loading = false;
   List<Filter> filters = [];
   Filter? choosenFilter;
-  var placeText = 'Berlin';
+  var placeText = '';
 
   @override
   void initState() {
@@ -63,16 +63,24 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _getAllFilters() async {
+    setState(() {
+      loading = true;
+    });
     final all = await rootBundle.loadString('assets/csv/filters2.csv');
-    List<List<dynamic>> rowsAsListOfValues = const CsvToListConverter().convert(all);
+    List<List<dynamic>> rowsAsListOfValues =
+        const CsvToListConverter().convert(all);
 
-    for (final row in rowsAsListOfValues){
+    for (final row in rowsAsListOfValues) {
       final nrow = row.first.toString().split(';');
-      if(nrow.last == 'N' && nrow[3] == '-'){
-        final newFilter = Filter(word: nrow.first, key: nrow[1], value: nrow[2]);
+      if (nrow.last == 'N' && nrow[3] == '-') {
+        final newFilter =
+            Filter(word: nrow.first, key: nrow[1], value: nrow[2]);
         filters.add(newFilter);
       }
     }
+    setState(() {
+      loading = false;
+    });
   }
 
   @override
@@ -85,7 +93,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Find all ${choosenFilter != null ? choosenFilter!.word : '...'} in ${placeText.isNotEmpty ? placeText : '...'}"),
+        title: Text(
+            "Find all ${choosenFilter != null ? choosenFilter!.word : '...'} in ${placeText.isNotEmpty ? placeText : '...'}"),
       ),
       body: !loading
           ? Center(
@@ -104,21 +113,23 @@ class _MyHomePageState extends State<MyHomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  ChooseFilter(
-                                    filters: filters,
-                                    callback: (filter ) {
-                                      setState(() {
-                                        choosenFilter = filter;
-                                      });
-                                    },
-                                  )),
+                            builder: (context) => ChooseFilter(
+                              filters: filters,
+                              callback: (filter) {
+                                setState(() {
+                                  choosenFilter = filter;
+                                });
+                              },
+                            ),
+                          ),
                         );
                       },
                       readOnly: true,
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
-                        hintText: choosenFilter != null ? choosenFilter!.word : 'for example Museum',
+                        hintText: choosenFilter != null
+                            ? choosenFilter!.word
+                            : 'for example Museum',
                       ),
                     ),
                   ),
@@ -146,7 +157,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           minimumSize:
                               MaterialStateProperty.all(const Size(200, 100))),
                       onPressed: () {
-                        if (placeTextController.text.isEmpty || choosenFilter == null) {
+                        if (placeTextController.text.isEmpty ||
+                            choosenFilter == null) {
                           return;
                         }
                         final value = placeTextController.text.trim();
@@ -173,11 +185,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) =>
-                                                    SeeAllMuseumsPage(
-                                                      elements: elementList,
-                                                      placeType: choosenFilter!.word,
-                                                    )),
+                                              builder: (context) =>
+                                                  SeeAllMuseumsPage(
+                                                elements: elementList,
+                                                placeType: choosenFilter!.word,
+                                              ),
+                                            ),
                                           ),
                                         }
                                     },
@@ -186,7 +199,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   }),
                                 });
                       },
-                      child: Text('Find all ${choosenFilter != null ? choosenFilter!.word : '...'} in ${placeText.isNotEmpty ? placeText : '...'}')),
+                      child: Text(
+                          'Find all ${choosenFilter != null ? choosenFilter!.word : '...'} in ${placeText.isNotEmpty ? placeText : '...'}')),
                 ],
               ),
             )
@@ -196,9 +210,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void showErrorAlert(BuildContext context, String text) {
     showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              content: Text(text),
-            ));
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text(text),
+      ),
+    );
   }
 }

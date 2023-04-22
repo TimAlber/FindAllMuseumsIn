@@ -5,7 +5,8 @@ import '../main.dart';
 import 'museums.dart';
 
 class PlaceStore {
-  Future<List<Element>?> getAllMueseumsIn(String input, Filter filterInput) async {
+  Future<List<Element>?> getAllMueseumsIn(
+      String input, Filter filterInput) async {
     try {
       var headers = {
         'Accept': '*/*',

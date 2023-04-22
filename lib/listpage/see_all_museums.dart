@@ -9,10 +9,9 @@ class SeeAllMuseumsPage extends StatefulWidget {
   final List<musem.Element> elements;
   final String placeType;
 
-  const SeeAllMuseumsPage({
-    required this.elements,
-    required this.placeType,
-    Key? key}) : super(key: key);
+  const SeeAllMuseumsPage(
+      {required this.elements, required this.placeType, Key? key})
+      : super(key: key);
 
   @override
   State<SeeAllMuseumsPage> createState() => _SeeAllMuseumsPageState();
@@ -40,7 +39,7 @@ class _SeeAllMuseumsPageState extends State<SeeAllMuseumsPage> {
             _searchText = value;
           });
         },
-        title: 'All ${widget.placeType}:',
+        title: 'All ${widget.placeType}s:',
         body: devicePosition != null
             ? _getPlaceList(
                 elements: widget.elements,
@@ -58,9 +57,10 @@ class _SeeAllMuseumsPageState extends State<SeeAllMuseumsPage> {
                 entry.tags.name!.toLowerCase().contains(_searchText)))
         .toList();
 
-
-    for(var ele in filteredList){
-      final distance = Geolocator.distanceBetween(ele.lat, ele.lon, devicePosition!.latitude, devicePosition!.longitude) / 1000;
+    for (var ele in filteredList) {
+      final distance = Geolocator.distanceBetween(ele.lat, ele.lon,
+              devicePosition!.latitude, devicePosition!.longitude) /
+          1000;
       ele.distance = distance;
     }
 
